@@ -3,6 +3,7 @@ import socket
 import paramiko
 from data import SFTP_USERNAME, SFTP_PASSWORD
 from threading import Thread
+import sys  # Для выхода из программы
 
 FILE_NAME = "messages.json"
 PORT1 = 19002  # Порт для общения с клиентами (сообщения)
@@ -122,6 +123,17 @@ def start_server():
     # Запускаем два потока для прослушивания портов
     Thread(target=listen_port_1).start()
     Thread(target=listen_port_2).start()
+
+    # Запуск потока для слушания команды на остановку сервера
+    def listen_for_shutdown():
+        while True:
+            command = input()  # Ожидаем ввода с консоли
+            if command.strip().lower() == "shutdown":
+                print("Завершаем работу сервера...")
+                sys.exit(0)  # Завершаем выполнение программы
+
+    # Запускаем поток для консольной команды
+    Thread(target=listen_for_shutdown).start()
 
 
 if __name__ == "__main__":
