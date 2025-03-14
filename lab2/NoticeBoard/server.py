@@ -5,7 +5,8 @@ from data import SFTP_USERNAME, SFTP_PASSWORD
 from threading import Thread
 
 FILE_NAME = "messages.json"
-PORT = 19001
+PORT1 = 19001  # Порт для общения с клиентами (сообщения)
+PORT2 = 19000  # Порт для сортировки текста
 messages = []
 
 # Настройки для подключения по SFTP
@@ -20,6 +21,7 @@ def sftp_connect():
     sftp = paramiko.SFTPClient.from_transport(transport)
     return sftp
 
+
 def load_messages():
     global messages
     try:
@@ -33,6 +35,7 @@ def load_messages():
         print(f"Ошибка при загрузке сообщений: {e}")
         messages = []
 
+
 def save_messages():
     try:
         sftp = sftp_connect()
@@ -44,10 +47,12 @@ def save_messages():
     except Exception as e:
         print(f"Ошибка при сохранении сообщений: {e}")
 
-def handle_client(client_socket):
+
+def handle_client_1(client_socket):
+    """Обработка клиентов на порту 19001 (работа с сообщениями)"""
     try:
         with client_socket:
-            print(f"Подключен клиент: {client_socket.getpeername()}")
+            print(f"Подключен клиент: {client_socket.getpeername()} на порт 19001")
             while True:
                 data = client_socket.recv(1024).decode("utf-8")
                 if not data:
@@ -62,17 +67,60 @@ def handle_client(client_socket):
     except Exception as e:
         print(f"Ошибка при обработке запроса: {e}")
     finally:
-        print(f"Клиент отключен: {client_socket.getpeername()}")
+        print(f"Клиент отключен: {client_socket.getpeername()} на порт 19001")
+
+
+def handle_client_2(client_socket):
+    """Обработка клиентов на порту 19000 для сортировки текста"""
+    try:
+        with client_socket:
+            print(f"Подключен клиент: {client_socket.getpeername()} на порт 19000")
+            while True:
+                data = client_socket.recv(1024).decode("utf-8")
+                if not data:
+                    break
+                sorted_words = sort_words(data)  # Сортировка слов
+                response = "\n".join(sorted_words)  # Каждое слово на новой строке
+                client_socket.sendall(response.encode("utf-8"))
+    except Exception as e:
+        print(f"Ошибка при обработке запроса: {e}")
+    finally:
+        print(f"Клиент отключен: {client_socket.getpeername()} на порт 19000")
+
+
+def sort_words(text):
+    """Функция сортировки слов с учётом регистра и уникальности"""
+    words = text.split()
+    # Приводим все слова к нижнему регистру и используем множество для уникальности
+    words = set(word.lower() for word in words)
+    sorted_words = sorted(words)  # Сортировка слов
+    return sorted_words
+
 
 def start_server():
     load_messages()
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
-        server_socket.bind(("", PORT))
-        server_socket.listen()
-        print("Сервер запущен...")
+    # Запускаем два сокет-сервера на разных портах
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket_1, socket.socket(socket.AF_INET,
+                                                                                             socket.SOCK_STREAM) as server_socket_2:
+        # Связываем сокеты с портами
+        server_socket_1.bind(("", PORT1))
+        server_socket_2.bind(("", PORT2))
+
+        # Слушаем оба порта
+        server_socket_1.listen()
+        server_socket_2.listen()
+
+        print(f"Сервер запущен. Порты: {PORT1} и {PORT2}")
+
         while True:
-            client_socket, _ = server_socket.accept()
-            Thread(target=handle_client, args=(client_socket,)).start()
+            # Ожидаем подключения на обоих портах
+            client_socket_1, _ = server_socket_1.accept()
+            client_socket_2, _ = server_socket_2.accept()
+
+            # Создаем потоки для обработки клиентов с разных портов
+            Thread(target=handle_client_1, args=(client_socket_1,)).start()
+            Thread(target=handle_client_2, args=(client_socket_2,)).start()
+
 
 if __name__ == "__main__":
     start_server()
