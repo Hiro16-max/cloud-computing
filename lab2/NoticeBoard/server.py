@@ -6,7 +6,7 @@ from threading import Thread
 
 FILE_NAME = "messages.json"
 PORT1 = 19002  # Порт для общения с клиентами (сообщения)
-PORT2 = 19000  # Порт для сортировки текста
+PORT2 = 19003  # Порт для сортировки текста
 messages = []
 
 # Настройки для подключения по SFTP
