@@ -27,6 +27,7 @@ def main():
                 else:
                     print("Некорректный порт! Завершаем работу.")
                     break
+
     except Exception as e:
         print("Ошибка при подключении к серверу:", e)
 
