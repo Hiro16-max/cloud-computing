@@ -2,7 +2,7 @@ import socket
 
 
 def main():
-    HOST = "localhost"
+    HOST = input("Введите IP-адрес сервера: ")  # Запрос IP-адреса при запуске клиента
     PORT = 19001
 
     try:
