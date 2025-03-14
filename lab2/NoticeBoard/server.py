@@ -113,6 +113,7 @@ def start_server():
 
         print(f"Сервер запущен. Порты: {PORT1} и {PORT2}")
 
+
         while True:
             # Ожидаем подключения на обоих портах
             client_socket_1, _ = server_socket_1.accept()
