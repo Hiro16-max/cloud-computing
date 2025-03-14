@@ -1,6 +1,6 @@
 import json
 import socket
-import paramiko  # Для работы с SFTP
+import paramiko
 from data import SFTP_USERNAME, SFTP_PASSWORD
 from threading import Thread
 
@@ -49,10 +49,10 @@ def save_messages():
 
 
 def handle_client_1(client_socket):
-    """Обработка клиентов на порту 19001 (работа с сообщениями)"""
+    """Обработка клиентов на порту 19002 (работа с сообщениями)"""
     try:
         with client_socket:
-            print(f"Подключен клиент: {client_socket.getpeername()} на порт 19001")
+            print(f"Подключен клиент: {client_socket.getpeername()} на порт 19002")
             while True:
                 data = client_socket.recv(1024).decode("utf-8")
                 if not data:
@@ -67,14 +67,14 @@ def handle_client_1(client_socket):
     except Exception as e:
         print(f"Ошибка при обработке запроса: {e}")
     finally:
-        print(f"Клиент отключен: {client_socket.getpeername()} на порт 19001")
+        print(f"Клиент отключен: {client_socket.getpeername()} на порт 19002")
 
 
 def handle_client_2(client_socket):
-    """Обработка клиентов на порту 19000 для сортировки текста"""
+    """Обработка клиентов на порту 19003 для сортировки текста"""
     try:
         with client_socket:
-            print(f"Подключен клиент: {client_socket.getpeername()} на порт 19000")
+            print(f"Подключен клиент: {client_socket.getpeername()} на порт 19003")
             while True:
                 data = client_socket.recv(1024).decode("utf-8")
                 if not data:
@@ -85,7 +85,7 @@ def handle_client_2(client_socket):
     except Exception as e:
         print(f"Ошибка при обработке запроса: {e}")
     finally:
-        print(f"Клиент отключен: {client_socket.getpeername()} на порт 19000")
+        print(f"Клиент отключен: {client_socket.getpeername()} на порт 19003")
 
 
 def sort_words(text):
@@ -98,30 +98,30 @@ def sort_words(text):
 
 
 def start_server():
-
     load_messages()
-    # Запускаем два сокет-сервера на разных портах
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket_1, socket.socket(socket.AF_INET,
-                                                                                             socket.SOCK_STREAM) as server_socket_2:
-        # Связываем сокеты с портами
-        server_socket_1.bind(("", PORT1))
-        server_socket_2.bind(("", PORT2))
 
-        # Слушаем оба порта
-        server_socket_1.listen()
-        server_socket_2.listen()
+    # Запускаем два сокет-сервера на разных портах в отдельных потоках
+    def listen_port_1():
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket_1:
+            server_socket_1.bind(("", PORT1))
+            server_socket_1.listen()
+            print(f"Сервер для сообщений запущен на порту {PORT1}")
+            while True:
+                client_socket_1, _ = server_socket_1.accept()
+                Thread(target=handle_client_1, args=(client_socket_1,)).start()
 
-        print(f"Сервер запущен. Порты: {PORT1} и {PORT2}")
+    def listen_port_2():
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket_2:
+            server_socket_2.bind(("", PORT2))
+            server_socket_2.listen()
+            print(f"Сервер для сортировки текста запущен на порту {PORT2}")
+            while True:
+                client_socket_2, _ = server_socket_2.accept()
+                Thread(target=handle_client_2, args=(client_socket_2,)).start()
 
-
-        while True:
-            # Ожидаем подключения на обоих портах
-            client_socket_1, _ = server_socket_1.accept()
-            client_socket_2, _ = server_socket_2.accept()
-
-            # Создаем потоки для обработки клиентов с разных портов
-            Thread(target=handle_client_1, args=(client_socket_1,)).start()
-            Thread(target=handle_client_2, args=(client_socket_2,)).start()
+    # Запускаем два потока для прослушивания портов
+    Thread(target=listen_port_1).start()
+    Thread(target=listen_port_2).start()
 
 
 if __name__ == "__main__":
