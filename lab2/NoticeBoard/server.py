@@ -98,6 +98,7 @@ def sort_words(text):
 
 
 def start_server():
+
     load_messages()
     # Запускаем два сокет-сервера на разных портах
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket_1, socket.socket(socket.AF_INET,
