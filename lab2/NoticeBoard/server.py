@@ -5,7 +5,7 @@ from data import SFTP_USERNAME, SFTP_PASSWORD
 from threading import Thread
 
 FILE_NAME = "messages.json"
-PORT1 = 19001  # Порт для общения с клиентами (сообщения)
+PORT1 = 19002  # Порт для общения с клиентами (сообщения)
 PORT2 = 19000  # Порт для сортировки текста
 messages = []
 
