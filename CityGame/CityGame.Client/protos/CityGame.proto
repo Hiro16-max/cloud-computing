@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+option csharp_namespace = "CityGame.Proto";
+
+package citygame;
+
+// Запрос от игрока на подключение
+message PlayerRequest {
+  string player_name = 1;
+}
+
+// Ответ на подключение
+message JoinReply {
+  string player_id = 1;
+  string message = 2;
+  bool game_started = 3;
+}
+
+// Запрос готовности игрока к игре
+message ReadyRequest {
+  string player_id = 1;
+}
+
+// Ответ на готовность (можно расширить при необходимости)
+message ReadyReply {
+  string message = 1;
+}
+
+// Запрос на отправку города
+message CityRequest {
+  string player_id = 1;
+  string city_name = 2;
+}
+
+// Запрос на состояние игры
+message GameRequest {
+  string player_id = 1;
+}
+
+// Ответ с состоянием игры
+message GameStateReply {
+  string current_turn_player = 1;
+  string last_city = 2;
+  string message = 3;
+  repeated string used_cities = 4;
+  repeated string players = 5;
+  bool is_game_over = 6;
+  string winner = 7;
+}
+
+// gRPC-сервис
+service CityGameService {
+  rpc JoinGame (PlayerRequest) returns (JoinReply);
+  rpc SetReady (ReadyRequest) returns (ReadyReply);
+  rpc SubmitCity (CityRequest) returns (GameStateReply);
+  rpc GetGameState (GameRequest) returns (GameStateReply);
+  rpc StreamUpdates (GameRequest) returns (stream GameStateReply);
+}

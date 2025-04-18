@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "AEiLzCfhfcw=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\fpsm2\\OneDrive\\Рабочий стол\\последний семестр\\Облачные вычисления\\lab3\\CityGame\\CityGame.Client\\CityGame.Client.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\fpsm2\\.nuget\\packages\\google.protobuf\\3.30.2\\google.protobuf.3.30.2.nupkg.sha512",
+    "C:\\Users\\fpsm2\\.nuget\\packages\\grpc.core.api\\2.70.0\\grpc.core.api.2.70.0.nupkg.sha512",
+    "C:\\Users\\fpsm2\\.nuget\\packages\\grpc.net.client\\2.70.0\\grpc.net.client.2.70.0.nupkg.sha512",
+    "C:\\Users\\fpsm2\\.nuget\\packages\\grpc.net.common\\2.70.0\\grpc.net.common.2.70.0.nupkg.sha512",
+    "C:\\Users\\fpsm2\\.nuget\\packages\\grpc.tools\\2.71.0\\grpc.tools.2.71.0.nupkg.sha512",
+    "C:\\Users\\fpsm2\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\6.0.0\\microsoft.extensions.logging.abstractions.6.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

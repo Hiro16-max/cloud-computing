@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "fAg4urf6c9FceXCuWPwq9AwxX4ulMkGwLqiO31Bdu5o=",
+  "Source": "CityGame.Server",
+  "BasePath": "_content/CityGame.Server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
